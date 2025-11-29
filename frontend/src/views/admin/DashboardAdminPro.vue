@@ -24,65 +24,54 @@
       </div>
 
       <!-- Navigation -->
-      <nav class="modern-nav">
-        <div class="nav-section">
-          <span class="nav-section-title" v-if="!sidebarCollapsed">MENÚ PRINCIPAL</span>
-          <button
-            v-for="item in menuItems"
-            :key="item.id"
-            :class="['modern-nav-item', { active: activeView === item.id }]"
-            @click="activeView = item.id"
-          >
-            <span class="nav-item-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path v-if="item.id === 'dashboard'" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <rect v-if="item.id === 'reservations'" x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <path v-if="item.id === 'rooms'" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                <path v-if="item.id === 'clients'" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                <circle v-if="item.id === 'clients'" cx="9" cy="7" r="4"/>
-                <path v-if="item.id === 'clients'" d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                <path v-if="item.id === 'clients'" d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                <polyline v-if="item.id === 'reports'" points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                <circle v-if="item.id === 'settings'" cx="12" cy="12" r="3"/>
-                <path v-if="item.id === 'settings'" d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
-              </svg>
-            </span>
-            <span class="nav-item-label" v-if="!sidebarCollapsed">{{ item.label }}</span>
-            <span class="nav-item-badge" v-if="item.badge && !sidebarCollapsed">{{ item.badge }}</span>
-            <div class="nav-item-indicator"></div>
-          </button>
-        </div>
+      <nav class="sidebar-nav">
+        <span class="nav-section-title" v-if="!sidebarCollapsed">MENÚ PRINCIPAL</span>
+        <button
+          v-for="item in menuItems"
+          :key="item.id"
+          :class="['nav-item', { active: activeView === item.id }]"
+          @click="activeView = item.id"
+        >
+          <span class="nav-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path v-if="item.id === 'dashboard'" d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <rect v-if="item.id === 'reservations'" x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+              <line v-if="item.id === 'reservations'" x1="16" y1="2" x2="16" y2="6"/>
+              <line v-if="item.id === 'reservations'" x1="8" y1="2" x2="8" y2="6"/>
+              <line v-if="item.id === 'reservations'" x1="3" y1="10" x2="21" y2="10"/>
+              <path v-if="item.id === 'rooms'" d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <path v-if="item.id === 'clients'" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle v-if="item.id === 'clients'" cx="9" cy="7" r="4"/>
+              <path v-if="item.id === 'clients'" d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path v-if="item.id === 'clients'" d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              <polyline v-if="item.id === 'reports'" points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              <circle v-if="item.id === 'settings'" cx="12" cy="12" r="3"/>
+              <path v-if="item.id === 'settings'" d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
+            </svg>
+          </span>
+          <span class="nav-label" v-if="!sidebarCollapsed">{{ item.label }}</span>
+          <span class="nav-badge" v-if="item.badge && !sidebarCollapsed">{{ item.badge }}</span>
+        </button>
       </nav>
 
       <!-- Footer del Sidebar -->
-      <div class="modern-sidebar-footer">
-        <div class="user-profile" v-if="!sidebarCollapsed">
-          <div class="user-avatar-modern">
-            <div class="avatar-gradient">A</div>
-            <div class="status-indicator"></div>
-          </div>
-          <div class="user-info-modern">
-            <span class="user-name-modern">Administrador</span>
-            <span class="user-role-modern">Panel de Control</span>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar">A</div>
+          <div class="user-details" v-if="!sidebarCollapsed">
+            <span class="user-name">Administrador</span>
+            <span class="user-role">Panel de Control</span>
           </div>
         </div>
-        <button @click="handleLogout" class="logout-btn-modern" :title="sidebarCollapsed ? 'Cerrar Sesión' : ''">
+        <button @click="handleLogout" class="btn-logout">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
             <polyline points="16 17 21 12 16 7"/>
             <line x1="21" y1="12" x2="9" y2="12"/>
           </svg>
-          <span v-if="!sidebarCollapsed">Salir</span>
+          <span v-if="!sidebarCollapsed">Cerrar Sesión</span>
         </button>
       </div>
-
-      <!-- Toggle Button -->
-      <button @click="toggleSidebar" class="sidebar-toggle-modern">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline v-if="!sidebarCollapsed" points="15 18 9 12 15 6"/>
-          <polyline v-else points="9 18 15 12 9 6"/>
-        </svg>
-      </button>
     </aside>
 
     <!-- Main Content -->
@@ -94,14 +83,7 @@
           <p class="page-subtitle">{{ fechaHoy }}</p>
         </div>
         <div class="topbar-right">
-          <button @click="generarReportePDF" class="btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Generar Reporte PDF
-          </button>
+          <!-- Botón de reporte eliminado -->
         </div>
       </div>
 
@@ -214,65 +196,259 @@
         </div>
       </div>
 
-      <!-- Reservations View -->
-      <div v-if="activeView === 'reservations'" class="reservations-content">
-        <div class="filters-bar">
-          <input
-            v-model="searchQuery"
-            type="text"
-            placeholder="Buscar por cliente, habitación..."
-            class="search-input"
-          />
-          <select v-model="filterStatus" class="filter-select">
-            <option value="">Todos los estados</option>
-            <option value="pagada">Pagadas</option>
-            <option value="pendiente">Pendientes</option>
-            <option value="cancelada">Canceladas</option>
-          </select>
+      <!-- Reservations View - ULTRA PROFESSIONAL -->
+      <div v-if="activeView === 'reservations'" class="dashboard-content">
+        <!-- Quick Stats for Reservations -->
+        <div class="stats-grid" style="margin-bottom: 2rem;">
+          <div class="stat-card success">
+            <div class="stat-icon-wrapper">
+              <div class="stat-icon">✈️</div>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Llegadas Hoy</p>
+              <h2 class="stat-value">{{ reservasHoy.length }}</h2>
+              <p class="stat-change positive">{{ reservasHoy.filter(r => r.estado === 'confirmada').length }} pendientes de check-in</p>
+            </div>
+          </div>
+
+          <div class="stat-card warning">
+            <div class="stat-icon-wrapper">
+              <div class="stat-icon">🚪</div>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Salidas Hoy</p>
+              <h2 class="stat-value">{{ salidasHoy.length }}</h2>
+              <p class="stat-change">{{ salidasHoy.filter(r => r.estado === 'activa').length }} pendientes de check-out</p>
+            </div>
+          </div>
+
+          <div class="stat-card info">
+            <div class="stat-icon-wrapper">
+              <div class="stat-icon">🏨</div>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Huéspedes Actuales</p>
+              <h2 class="stat-value">{{ huespedes.activos }}</h2>
+              <p class="stat-change">En {{ reservasActivas.length }} habitaciones</p>
+            </div>
+          </div>
+
+          <div class="stat-card" style="border-top-color: #6366f1;">
+            <div class="stat-icon-wrapper" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(99, 102, 241, 0.05));">
+              <div class="stat-icon">📅</div>
+            </div>
+            <div class="stat-content">
+              <p class="stat-label">Próximos 7 Días</p>
+              <h2 class="stat-value">{{ proximasReservas.length }}</h2>
+              <p class="stat-change">Reservas confirmadas</p>
+            </div>
+          </div>
         </div>
 
-        <div class="table-card">
+        <div class="reservations-section">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-title-icon">📅</span>
+              Gestión de Reservas
+            </h2>
+            <div style="display: flex; gap: 1rem;">
+              <button class="btn-secondary" @click="exportarReservas">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Exportar Excel
+              </button>
+              <button class="btn-primary" @click="abrirModalNuevaReserva">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Nueva Reserva
+              </button>
+            </div>
+          </div>
+
+          <!-- BANNER INFORMATIVO -->
+          <div style="margin-bottom: 1.5rem; padding: 1rem 1.5rem; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: var(--radius-lg); border-left: 5px solid var(--booking-success); display: flex; align-items: center; gap: 1rem; box-shadow: var(--shadow-sm);">
+            <div style="font-size: 2rem;">💳</div>
+            <div style="flex: 1;">
+              <p style="font-weight: 700; color: var(--booking-success); margin: 0; font-size: 1rem;">
+                Sistema de Pago Anticipado
+              </p>
+              <p style="font-size: 0.875rem; color: var(--color-gray-700); margin: 0; margin-top: 0.25rem;">
+                Todas las reservas en el sistema están <strong>100% pagadas</strong>. El pago se procesa obligatoriamente al momento de crear cada reserva.
+              </p>
+            </div>
+            <div style="background: var(--color-white); padding: 0.5rem 1rem; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+              <p style="margin: 0; font-size: 0.75rem; color: var(--color-gray-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Total Reservas</p>
+              <p style="margin: 0; font-size: 1.5rem; font-weight: 800; color: var(--booking-success);">{{ allReservations.length }}</p>
+            </div>
+          </div>
+
+          <!-- TABS PROFESIONALES -->
+          <div class="booking-tabs">
+            <button
+              v-for="tab in reservationTabs"
+              :key="tab.id"
+              :class="['booking-tab', { active: activeReservationTab === tab.id }]"
+              @click="activeReservationTab = tab.id"
+            >
+              <span class="tab-icon">{{ tab.icon }}</span>
+              <span class="tab-label">{{ tab.label }}</span>
+              <span class="tab-count">{{ tab.count }}</span>
+            </button>
+          </div>
+
+          <!-- FILTROS AVANZADOS -->
+          <div class="advanced-filters">
+            <div class="search-input-wrapper">
+              <svg class="search-input-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Buscar por cliente, cédula, habitación..."
+                class="search-input"
+              />
+            </div>
+
+            <div class="date-filters">
+              <button
+                v-for="dateFilter in dateFilters"
+                :key="dateFilter.id"
+                :class="['date-filter-btn', { active: activeDateFilter === dateFilter.id }]"
+                @click="activeDateFilter = dateFilter.id"
+              >
+                <span>{{ dateFilter.icon }}</span>
+                <span>{{ dateFilter.label }}</span>
+              </button>
+            </div>
+
+            <select v-model="filterStatus" class="filter-select">
+              <option value="">💳 Todas (100% Pagadas)</option>
+              <option value="confirmada">✅ Confirmadas - Pendiente Check-in</option>
+              <option value="activa">🏨 Activas - Huésped en Hotel</option>
+              <option value="completada">✔️ Completadas - Check-out Realizado</option>
+              <option value="cancelada">❌ Canceladas</option>
+            </select>
+          </div>
+
           <div class="table-responsive">
             <table class="data-table">
               <thead>
                 <tr>
                   <th>ID</th>
                   <th>Cliente</th>
-                  <th>Cédula</th>
                   <th>Habitación</th>
                   <th>Check-in</th>
                   <th>Check-out</th>
-                  <th>Personas</th>
-                  <th>Total</th>
+                  <th>Noches</th>
+                  <th>Huéspedes</th>
+                  <th>Total Pagado</th>
                   <th>Estado</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="reserva in filteredReservations" :key="reserva.id">
-                  <td>#{{ reserva.id }}</td>
-                  <td>{{ reserva.cliente_nombre }} {{ reserva.cliente_apellido }}</td>
-                  <td>{{ reserva.cliente_cedula }}</td>
-                  <td>{{ reserva.habitacion }}</td>
-                  <td>{{ formatDate(reserva.fecha_entrada) }}</td>
-                  <td>{{ formatDate(reserva.fecha_salida) }}</td>
-                  <td>{{ reserva.num_adultos }} A / {{ reserva.num_ninos }} N</td>
-                  <td class="price">${{ formatPrice(reserva.precio_total) }}</td>
+                <tr v-for="reserva in filteredReservationsAdvanced" :key="reserva.id" class="animate-fade-in">
                   <td>
-                    <span :class="['badge', `badge-${reserva.estado}`]">{{ reserva.estado }}</span>
+                    <strong style="color: var(--booking-primary);">#{{ reserva.id }}</strong>
+                  </td>
+                  <td>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                      <strong>{{ reserva.cliente_nombre }} {{ reserva.cliente_apellido }}</strong>
+                      <small style="color: var(--color-gray-600);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline; vertical-align: middle;">
+                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                          <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                        CC: {{ reserva.cliente_cedula }}
+                      </small>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <span style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: var(--booking-primary); padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600; font-size: 0.875rem;">
+                        🏨 {{ reserva.habitacion }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; flex-direction: column; gap: 0.125rem;">
+                      <strong>{{ formatDate(reserva.fecha_entrada) }}</strong>
+                      <small style="color: var(--color-gray-600);">{{ getDayName(reserva.fecha_entrada) }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; flex-direction: column; gap: 0.125rem;">
+                      <strong>{{ formatDate(reserva.fecha_salida) }}</strong>
+                      <small style="color: var(--color-gray-600);">{{ getDayName(reserva.fecha_salida) }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span style="background: var(--color-gray-100); padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600;">
+                      {{ calcularNoches(reserva.fecha_entrada, reserva.fecha_salida) }} noches
+                    </span>
+                  </td>
+                  <td>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                      <span style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                        👤 {{ reserva.num_adultos }}
+                      </span>
+                      <span v-if="reserva.num_ninos > 0" style="display: inline-flex; align-items: center; gap: 0.25rem;">
+                        👶 {{ reserva.num_ninos }}
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                      <strong class="price">${{ formatPrice(reserva.precio_total) }}</strong>
+                      <span style="display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.75rem; color: var(--booking-success); font-weight: 600;">
+                        ✓ Pagado
+                      </span>
+                    </div>
+                  </td>
+                  <td>
+                    <span :class="['badge', `badge-${reserva.estado}`]">
+                      {{ getEstadoLabel(reserva.estado) }}
+                    </span>
                   </td>
                   <td>
                     <div class="action-buttons">
+                      <button v-if="reserva.estado === 'confirmada'" class="btn-icon btn-success" title="Realizar Check-in" @click="hacerCheckIn(reserva.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                      </button>
+                      <button v-if="reserva.estado === 'activa'" class="btn-icon btn-warning" title="Realizar Check-out" @click="hacerCheckOut(reserva.id)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                          <polyline points="16 17 21 12 16 7"></polyline>
+                          <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                      </button>
+                      <button class="btn-icon btn-view" title="Ver detalles" @click="verDetallesReserva(reserva)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                          <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                      </button>
                       <button class="btn-icon btn-edit" title="Editar" @click="abrirModalEditar(reserva)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                           <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
                       </button>
-                      <button v-if="reserva.estado !== 'cancelada'" class="btn-icon btn-delete" title="Eliminar" @click="eliminarReserva(reserva.id)">
+                      <button v-if="reserva.estado !== 'cancelada' && reserva.estado !== 'completada'" class="btn-icon btn-delete" title="Cancelar reserva" @click="eliminarReserva(reserva.id)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                          <polyline points="3 6 5 6 21 6"></polyline>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                          <line x1="9" y1="9" x2="15" y2="15"></line>
                         </svg>
                       </button>
                     </div>
@@ -358,6 +534,107 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal de Nueva Reserva -->
+    <div v-if="modalNuevaReserva" class="modal-overlay" @click="cerrarModalNuevaReserva">
+      <div class="modal-content modal-large" @click.stop>
+        <div class="modal-header">
+          <h2>✨ Nueva Reserva</h2>
+          <button @click="cerrarModalNuevaReserva" class="btn-close">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">Nombre del Cliente</label>
+              <input type="text" v-model="nuevaReserva.cliente_nombre" class="form-input" placeholder="Ingrese el nombre" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Apellido del Cliente</label>
+              <input type="text" v-model="nuevaReserva.cliente_apellido" class="form-input" placeholder="Ingrese el apellido" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Cédula</label>
+              <input type="text" v-model="nuevaReserva.cliente_cedula" class="form-input" placeholder="123456789" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Email</label>
+              <input type="email" v-model="nuevaReserva.cliente_email" class="form-input" placeholder="cliente@email.com" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Teléfono</label>
+              <input type="tel" v-model="nuevaReserva.cliente_telefono" class="form-input" placeholder="+57 300 123 4567" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Tipo de Habitación</label>
+              <select v-model="nuevaReserva.tipo_habitacion_id" class="form-select">
+                <option value="">Seleccione una habitación</option>
+                <option v-for="tipo in tiposHabitacion" :key="tipo.id" :value="tipo.id">
+                  {{ tipo.nombre }} - ${{ formatPrice(tipo.precio_base) }}/noche
+                </option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="required">Fecha de Entrada</label>
+              <input type="date" v-model="nuevaReserva.fecha_entrada" class="form-input" :min="fechaMinima" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Fecha de Salida</label>
+              <input type="date" v-model="nuevaReserva.fecha_salida" class="form-input" :min="nuevaReserva.fecha_entrada" />
+            </div>
+
+            <div class="form-group">
+              <label class="required">Número de Adultos</label>
+              <input type="number" v-model.number="nuevaReserva.num_adultos" min="1" max="10" class="form-input" />
+            </div>
+
+            <div class="form-group">
+              <label>Número de Niños</label>
+              <input type="number" v-model.number="nuevaReserva.num_ninos" min="0" max="10" class="form-input" />
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label class="required">Precio Total (COP)</label>
+              <div style="position: relative;">
+                <input type="number" v-model.number="nuevaReserva.precio_total" min="0" class="form-input" style="padding-left: 2.5rem;" />
+                <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); font-weight: 600; color: var(--booking-primary);">$</span>
+              </div>
+              <p class="form-hint" v-if="nuevaReserva.fecha_entrada && nuevaReserva.fecha_salida">
+                {{ calcularNoches(nuevaReserva.fecha_entrada, nuevaReserva.fecha_salida) }} noches
+              </p>
+            </div>
+
+            <div class="form-group" style="grid-column: 1 / -1;">
+              <label>Observaciones</label>
+              <textarea v-model="nuevaReserva.observaciones" class="form-textarea" rows="3" placeholder="Notas adicionales sobre la reserva..."></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: var(--radius-md); border-left: 4px solid var(--booking-success);">
+            <p style="font-weight: 600; color: var(--booking-success); margin: 0;">
+              ✓ El pago se realizará al momento de crear la reserva
+            </p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button @click="cerrarModalNuevaReserva" class="btn-secondary">Cancelar</button>
+          <button @click="crearNuevaReserva" class="btn-primary">Crear Reserva y Procesar Pago</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -386,8 +663,10 @@ import {
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import axios from 'axios'
-import '@/assets/admin-styles.css'
-import '@/assets/modern-sidebar.css'
+import '@/assets/booking-admin.css'
+import '@/assets/booking-content.css'
+import '@/assets/booking-modals.css'
+import '@/assets/booking-reservations.css'
 
 const API_URL = 'http://localhost:8000/api'
 
@@ -415,6 +694,41 @@ const searchQuery = ref('')
 const filterStatus = ref('')
 const loading = ref(false)
 const loadingReservations = ref(false)
+
+// Advanced Reservations Filters
+const activeReservationTab = ref('all')
+const activeDateFilter = ref('all')
+
+// Nueva Reserva
+const modalNuevaReserva = ref(false)
+const tiposHabitacion = ref([])
+const fechaMinima = computed(() => {
+  const hoy = new Date()
+  return hoy.toISOString().split('T')[0]
+})
+
+const nuevaReserva = ref({
+  cliente_nombre: '',
+  cliente_apellido: '',
+  cliente_cedula: '',
+  cliente_email: '',
+  cliente_telefono: '',
+  tipo_habitacion_id: '',
+  fecha_entrada: '',
+  fecha_salida: '',
+  num_adultos: 1,
+  num_ninos: 0,
+  precio_total: 0,
+  observaciones: ''
+})
+
+const dateFilters = ref([
+  { id: 'all', label: 'Todas', icon: '📋' },
+  { id: 'today', label: 'Hoy', icon: '📅' },
+  { id: 'tomorrow', label: 'Mañana', icon: '🌅' },
+  { id: 'week', label: 'Próximos 7 días', icon: '📆' },
+  { id: 'month', label: 'Este mes', icon: '🗓️' }
+])
 
 // Datos de ejemplo (conectar con API real)
 const statsCards = ref([
@@ -550,6 +864,236 @@ const filteredReservations = computed(() => {
 
   if (filterStatus.value) {
     filtered = filtered.filter(r => r.estado === filterStatus.value)
+  }
+
+  return filtered
+})
+
+// Helper function: Get day name in Spanish
+const getDayName = (dateString) => {
+  const fecha = new Date(dateString)
+  const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+  return dias[fecha.getDay()]
+}
+
+// Helper function: Calculate nights
+const calcularNoches = (checkIn, checkOut) => {
+  const inicio = new Date(checkIn)
+  const fin = new Date(checkOut)
+  const diff = Math.abs(fin - inicio)
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+}
+
+// Helper function: Get formatted status label
+const getEstadoLabel = (estado) => {
+  const estados = {
+    confirmada: 'Confirmada',
+    'en-proceso': 'En Proceso',
+    completada: 'Completada',
+    cancelada: 'Cancelada',
+    activa: 'Activa'
+  }
+  return estados[estado] || estado
+}
+
+// Advanced computed properties for reservations filtering
+const reservasHoy = computed(() => {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  return allReservations.value.filter(r => {
+    const checkIn = new Date(r.fecha_entrada)
+    checkIn.setHours(0, 0, 0, 0)
+    return checkIn.getTime() === hoy.getTime()
+  })
+})
+
+const salidasHoy = computed(() => {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  return allReservations.value.filter(r => {
+    const checkOut = new Date(r.fecha_salida)
+    checkOut.setHours(0, 0, 0, 0)
+    return checkOut.getTime() === hoy.getTime()
+  })
+})
+
+const reservasActivas = computed(() => {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  return allReservations.value.filter(r => {
+    const checkIn = new Date(r.fecha_entrada)
+    const checkOut = new Date(r.fecha_salida)
+    checkIn.setHours(0, 0, 0, 0)
+    checkOut.setHours(0, 0, 0, 0)
+    return checkIn <= hoy && checkOut >= hoy && (r.estado === 'confirmada' || r.estado === 'activa')
+  })
+})
+
+const proximasReservas = computed(() => {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const futuro = new Date(hoy)
+  futuro.setDate(futuro.getDate() + 7)
+
+  return allReservations.value.filter(r => {
+    const checkIn = new Date(r.fecha_entrada)
+    checkIn.setHours(0, 0, 0, 0)
+    return checkIn > hoy && checkIn <= futuro
+  })
+})
+
+const huespedes = computed(() => {
+  return reservasActivas.value.reduce((total, reserva) => {
+    return total + ((reserva.num_adultos || 0) + (reserva.num_ninos || 0))
+  }, 0)
+})
+
+// Reservation tabs with dynamic counts
+const reservationTabs = computed(() => [
+  {
+    id: 'all',
+    label: 'Todas',
+    icon: '📋',
+    count: allReservations.value.length
+  },
+  {
+    id: 'today',
+    label: 'Hoy',
+    icon: '📅',
+    count: reservasHoy.value.length
+  },
+  {
+    id: 'tomorrow',
+    label: 'Mañana',
+    icon: '🌅',
+    count: (() => {
+      const manana = new Date()
+      manana.setDate(manana.getDate() + 1)
+      manana.setHours(0, 0, 0, 0)
+      return allReservations.value.filter(r => {
+        const checkIn = new Date(r.fecha_entrada)
+        checkIn.setHours(0, 0, 0, 0)
+        return checkIn.getTime() === manana.getTime()
+      }).length
+    })()
+  },
+  {
+    id: 'week',
+    label: 'Esta Semana',
+    icon: '📆',
+    count: proximasReservas.value.length
+  },
+  {
+    id: 'active',
+    label: 'Activas',
+    icon: '✅',
+    count: reservasActivas.value.length
+  }
+])
+
+// Advanced filtered reservations with all filters combined
+const filteredReservationsAdvanced = computed(() => {
+  let filtered = allReservations.value
+
+  // Apply search filter
+  if (searchQuery.value) {
+    const query = searchQuery.value.toLowerCase()
+    filtered = filtered.filter(r =>
+      r.cliente_nombre.toLowerCase().includes(query) ||
+      r.cliente_apellido.toLowerCase().includes(query) ||
+      r.habitacion.toLowerCase().includes(query) ||
+      r.cliente_cedula.includes(query)
+    )
+  }
+
+  // Apply status filter
+  if (filterStatus.value) {
+    filtered = filtered.filter(r => r.estado === filterStatus.value)
+  }
+
+  // Apply tab filter
+  if (activeReservationTab.value !== 'all') {
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+
+    switch (activeReservationTab.value) {
+      case 'today':
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn.getTime() === hoy.getTime()
+        })
+        break
+      case 'tomorrow':
+        const manana = new Date(hoy)
+        manana.setDate(manana.getDate() + 1)
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn.getTime() === manana.getTime()
+        })
+        break
+      case 'week':
+        const futuro = new Date(hoy)
+        futuro.setDate(futuro.getDate() + 7)
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn > hoy && checkIn <= futuro
+        })
+        break
+      case 'active':
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          const checkOut = new Date(r.fecha_salida)
+          checkIn.setHours(0, 0, 0, 0)
+          checkOut.setHours(0, 0, 0, 0)
+          return checkIn <= hoy && checkOut >= hoy && (r.estado === 'confirmada' || r.estado === 'activa')
+        })
+        break
+    }
+  }
+
+  // Apply date filter
+  if (activeDateFilter.value !== 'all') {
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+
+    switch (activeDateFilter.value) {
+      case 'today':
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn.getTime() === hoy.getTime()
+        })
+        break
+      case 'tomorrow':
+        const manana = new Date(hoy)
+        manana.setDate(manana.getDate() + 1)
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn.getTime() === manana.getTime()
+        })
+        break
+      case 'week':
+        const futuro = new Date(hoy)
+        futuro.setDate(futuro.getDate() + 7)
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          checkIn.setHours(0, 0, 0, 0)
+          return checkIn >= hoy && checkIn <= futuro
+        })
+        break
+      case 'month':
+        const mesActual = hoy.getMonth()
+        const anioActual = hoy.getFullYear()
+        filtered = filtered.filter(r => {
+          const checkIn = new Date(r.fecha_entrada)
+          return checkIn.getMonth() === mesActual && checkIn.getFullYear() === anioActual
+        })
+        break
+    }
   }
 
   return filtered
@@ -698,6 +1242,103 @@ function formatDate(dateString) {
 
 function formatPrice(price) {
   return price.toLocaleString('es-CO')
+}
+
+function verDetallesReserva(reserva) {
+  // Create a detailed view of the reservation
+  const detalles = `
+=== DETALLES DE LA RESERVA #${reserva.id} ===
+
+CLIENTE:
+  Nombre: ${reserva.cliente_nombre} ${reserva.cliente_apellido}
+  Cédula: ${reserva.cliente_cedula}
+  Email: ${reserva.cliente_email}
+  Teléfono: ${reserva.cliente_telefono}
+
+RESERVA:
+  Habitación: ${reserva.habitacion}
+  Check-in: ${formatDate(reserva.fecha_entrada)} (${getDayName(reserva.fecha_entrada)})
+  Check-out: ${formatDate(reserva.fecha_salida)} (${getDayName(reserva.fecha_salida)})
+  Noches: ${calcularNoches(reserva.fecha_entrada, reserva.fecha_salida)}
+  Adultos: ${reserva.num_adultos}
+  Niños: ${reserva.num_ninos}
+
+PAGO:
+  Total: $${formatPrice(reserva.precio_total)}
+  Estado: PAGADO ✓
+
+ESTADO: ${getEstadoLabel(reserva.estado).toUpperCase()}
+  `.trim()
+
+  alert(detalles)
+}
+
+function exportarReservas() {
+  try {
+    const reservas = filteredReservationsAdvanced.value
+
+    if (reservas.length === 0) {
+      alert('No hay reservas para exportar')
+      return
+    }
+
+    // Prepare CSV data
+    const headers = [
+      'ID',
+      'Cliente',
+      'Cédula',
+      'Email',
+      'Teléfono',
+      'Habitación',
+      'Check-in',
+      'Check-out',
+      'Noches',
+      'Huéspedes',
+      'Total',
+      'Estado de Pago',
+      'Estado'
+    ]
+
+    const rows = reservas.map(r => [
+      r.id,
+      `${r.cliente_nombre} ${r.cliente_apellido}`,
+      r.cliente_cedula,
+      r.cliente_email,
+      r.cliente_telefono,
+      r.habitacion,
+      formatDate(r.fecha_entrada),
+      formatDate(r.fecha_salida),
+      calcularNoches(r.fecha_entrada, r.fecha_salida),
+      `${r.num_adultos} adultos, ${r.num_ninos} niños`,
+      `$${formatPrice(r.precio_total)}`,
+      'PAGADO',
+      getEstadoLabel(r.estado)
+    ])
+
+    // Create CSV content
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n')
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+    const link = document.createElement('a')
+    const url = URL.createObjectURL(blob)
+
+    link.setAttribute('href', url)
+    link.setAttribute('download', `reservas_${new Date().toISOString().split('T')[0]}.csv`)
+    link.style.visibility = 'hidden'
+
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    alert(`Se exportaron ${reservas.length} reservas exitosamente`)
+  } catch (error) {
+    console.error('Error al exportar reservas:', error)
+    alert('Error al exportar las reservas. Por favor, intenta nuevamente.')
+  }
 }
 
 async function cancelarReserva(id) {
@@ -987,21 +1628,19 @@ async function cargarEstadisticas() {
 async function cargarReservas() {
   try {
     loadingReservations.value = true
-    // Usar endpoint de admin PHP que funciona
-    const response = await axios.get('http://172.17.192.1/hotel-api-emergencia.php', {
-      params: { action: 'admin_reservas' }
-    })
+    // Usar API de Laravel
+    const response = await axios.get('http://localhost:8000/api/admin/reservas')
 
     if (response.data.success) {
       allReservations.value = response.data.reservas.map(reserva => ({
         id: reserva.id,
-        cliente_nombre: reserva.cliente_nombre || 'N/A',
-        cliente_apellido: '',
-        cliente_email: reserva.cliente_email || 'N/A',
-        cliente_telefono: reserva.cliente_telefono || 'N/A',
+        cliente_nombre: reserva.cliente?.nombre || 'N/A',
+        cliente_apellido: reserva.cliente?.apellido || '',
+        cliente_email: reserva.cliente?.email || 'N/A',
+        cliente_telefono: reserva.cliente?.telefono || 'N/A',
         cliente_cedula: reserva.cliente_cedula,
-        habitacion: reserva.numero_habitacion || reserva.tipo_nombre || `Reserva #${reserva.id}`,
-        tipo_nombre: reserva.tipo_nombre || 'N/A',
+        habitacion: `${reserva.habitacion?.tipo_habitacion?.nombre || 'Habitación'} #${reserva.habitacion?.numero_habitacion || reserva.habitacion_id}`,
+        tipo_nombre: reserva.habitacion?.tipo_habitacion?.nombre || 'N/A',
         fecha_entrada: reserva.fecha_entrada,
         fecha_salida: reserva.fecha_salida,
         num_adultos: reserva.num_adultos,
@@ -1014,10 +1653,11 @@ async function cargarReservas() {
       // Actualizar reservas recientes (últimas 10)
       recentReservations.value = allReservations.value.slice(0, 10)
 
-      console.log('✅ Reservas cargadas desde admin:', allReservations.value.length)
+      console.log('✅ Reservas cargadas desde Laravel API:', allReservations.value.length)
     }
   } catch (error) {
     console.error('❌ Error al cargar reservas:', error)
+    console.error('Detalles:', error.response?.data)
   } finally {
     loadingReservations.value = false
   }
@@ -1025,25 +1665,64 @@ async function cargarReservas() {
 
 // Función para eliminar reserva
 async function eliminarReserva(reservaId) {
-  if (!confirm('¿Estás seguro de que deseas eliminar esta reserva?')) {
+  if (!confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
     return
   }
 
   try {
-    const response = await axios.post('http://172.17.192.1/hotel-api-emergencia.php', {
-      action: 'admin_cancelar_reserva',
-      reserva_id: reservaId
-    })
+    const response = await axios.post(`http://localhost:8000/api/admin/reservas/${reservaId}/cancelar`)
 
     if (response.data.success) {
-      mostrarNotificacion('Reserva eliminada exitosamente', 'success')
+      mostrarNotificacion('Reserva cancelada exitosamente', 'success')
       await cargarReservas() // Recargar lista
     } else {
-      mostrarNotificacion('Error al eliminar reserva: ' + response.data.error, 'error')
+      mostrarNotificacion('Error al cancelar reserva: ' + response.data.message, 'error')
     }
   } catch (error) {
-    console.error('Error al eliminar reserva:', error)
-    mostrarNotificacion('Error al eliminar reserva', 'error')
+    console.error('Error al cancelar reserva:', error)
+    mostrarNotificacion('Error al cancelar reserva', 'error')
+  }
+}
+
+// Función para hacer check-in
+async function hacerCheckIn(reservaId) {
+  if (!confirm('¿Confirmar check-in para esta reserva?')) {
+    return
+  }
+
+  try {
+    const response = await axios.post(`http://localhost:8000/api/admin/reservas/${reservaId}/check-in`)
+
+    if (response.data.success) {
+      mostrarNotificacion('Check-in realizado exitosamente', 'success')
+      await cargarReservas() // Recargar lista
+    } else {
+      mostrarNotificacion('Error al realizar check-in: ' + response.data.message, 'error')
+    }
+  } catch (error) {
+    console.error('Error al realizar check-in:', error)
+    mostrarNotificacion('Error al realizar check-in', 'error')
+  }
+}
+
+// Función para hacer check-out
+async function hacerCheckOut(reservaId) {
+  if (!confirm('¿Confirmar check-out para esta reserva?')) {
+    return
+  }
+
+  try {
+    const response = await axios.post(`http://localhost:8000/api/admin/reservas/${reservaId}/check-out`)
+
+    if (response.data.success) {
+      mostrarNotificacion('Check-out realizado exitosamente', 'success')
+      await cargarReservas() // Recargar lista
+    } else {
+      mostrarNotificacion('Error al realizar check-out: ' + response.data.message, 'error')
+    }
+  } catch (error) {
+    console.error('Error al realizar check-out:', error)
+    mostrarNotificacion('Error al realizar check-out', 'error')
   }
 }
 
@@ -1065,9 +1744,7 @@ async function guardarEdicionReserva() {
   if (!reservaEditando.value) return
 
   try {
-    const response = await axios.post('http://172.17.192.1/hotel-api-emergencia.php', {
-      action: 'admin_modificar_reserva',
-      reserva_id: reservaEditando.value.id,
+    const response = await axios.put(`http://localhost:8000/api/admin/reservas/${reservaEditando.value.id}`, {
       fecha_entrada: reservaEditando.value.fecha_entrada,
       fecha_salida: reservaEditando.value.fecha_salida,
       num_adultos: reservaEditando.value.num_adultos,
@@ -1080,11 +1757,112 @@ async function guardarEdicionReserva() {
       cerrarModalEditar()
       await cargarReservas() // Recargar lista
     } else {
-      mostrarNotificacion('Error al actualizar reserva: ' + response.data.error, 'error')
+      mostrarNotificacion('Error al actualizar reserva: ' + response.data.message, 'error')
     }
   } catch (error) {
     console.error('Error al actualizar reserva:', error)
     mostrarNotificacion('Error al actualizar reserva', 'error')
+  }
+}
+
+// Funciones para Nueva Reserva
+function abrirModalNuevaReserva() {
+  // Reset form
+  nuevaReserva.value = {
+    cliente_nombre: '',
+    cliente_apellido: '',
+    cliente_cedula: '',
+    cliente_email: '',
+    cliente_telefono: '',
+    tipo_habitacion_id: '',
+    fecha_entrada: '',
+    fecha_salida: '',
+    num_adultos: 1,
+    num_ninos: 0,
+    precio_total: 0,
+    observaciones: ''
+  }
+  modalNuevaReserva.value = true
+}
+
+function cerrarModalNuevaReserva() {
+  modalNuevaReserva.value = false
+}
+
+async function crearNuevaReserva() {
+  // Validación
+  if (!nuevaReserva.value.cliente_nombre || !nuevaReserva.value.cliente_apellido) {
+    alert('Por favor ingrese el nombre y apellido del cliente')
+    return
+  }
+
+  if (!nuevaReserva.value.cliente_cedula) {
+    alert('Por favor ingrese la cédula del cliente')
+    return
+  }
+
+  if (!nuevaReserva.value.cliente_email) {
+    alert('Por favor ingrese el email del cliente')
+    return
+  }
+
+  if (!nuevaReserva.value.cliente_telefono) {
+    alert('Por favor ingrese el teléfono del cliente')
+    return
+  }
+
+  if (!nuevaReserva.value.tipo_habitacion_id) {
+    alert('Por favor seleccione un tipo de habitación')
+    return
+  }
+
+  if (!nuevaReserva.value.fecha_entrada || !nuevaReserva.value.fecha_salida) {
+    alert('Por favor seleccione las fechas de entrada y salida')
+    return
+  }
+
+  if (nuevaReserva.value.fecha_entrada >= nuevaReserva.value.fecha_salida) {
+    alert('La fecha de salida debe ser posterior a la fecha de entrada')
+    return
+  }
+
+  if (!nuevaReserva.value.precio_total || nuevaReserva.value.precio_total <= 0) {
+    alert('Por favor ingrese el precio total de la reserva')
+    return
+  }
+
+  try {
+    loading.value = true
+
+    const response = await axios.post(`${API_URL}/admin/reservas`, {
+      cliente_nombre: nuevaReserva.value.cliente_nombre,
+      cliente_apellido: nuevaReserva.value.cliente_apellido,
+      cliente_cedula: nuevaReserva.value.cliente_cedula,
+      cliente_email: nuevaReserva.value.cliente_email,
+      cliente_telefono: nuevaReserva.value.cliente_telefono,
+      tipo_habitacion_id: nuevaReserva.value.tipo_habitacion_id,
+      fecha_entrada: nuevaReserva.value.fecha_entrada,
+      fecha_salida: nuevaReserva.value.fecha_salida,
+      num_adultos: nuevaReserva.value.num_adultos,
+      num_ninos: nuevaReserva.value.num_ninos,
+      precio_total: nuevaReserva.value.precio_total,
+      observaciones: nuevaReserva.value.observaciones,
+      estado: 'confirmada',
+      pagado: true // Siempre pagado como indicaste
+    })
+
+    if (response.data.success) {
+      alert('✅ Reserva creada exitosamente y pago procesado')
+      cerrarModalNuevaReserva()
+      await cargarReservas() // Recargar lista
+    } else {
+      alert('Error al crear reserva: ' + (response.data.message || 'Error desconocido'))
+    }
+  } catch (error) {
+    console.error('Error al crear reserva:', error)
+    alert('Error al crear la reserva. Por favor, intenta nuevamente.')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -1094,6 +1872,9 @@ async function cargarHabitaciones() {
 
     if (response.data.success) {
       const tipos = response.data.tipos
+
+      // Guardar tipos para el formulario de nueva reserva
+      tiposHabitacion.value = tipos
 
       // Actualizar gráfica de barras con tipos de habitación reales
       barChartData.value.labels = tipos.map(t => t.nombre.substring(0, 20))
@@ -1152,709 +1933,5 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.admin-layout {
-  display: flex;
-  min-height: 100vh;
-  background: #f5f7fa;
-}
-
-/* ========== MODERN SIDEBAR ========== */
-.modern-sidebar {
-  width: 280px;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1000;
-  box-shadow: 4px 0 30px rgba(0, 0, 0, 0.15);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.modern-sidebar.collapsed {
-  width: 80px;
-}
-
-/* Brand / Logo */
-.sidebar-brand {
-  padding: 2rem 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  animation: slideIn 0.5s ease;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.logo-circle {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-  flex-shrink: 0;
-}
-
-.logo-circle svg {
-  color: white;
-}
-
-.logo-mini {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
-}
-
-.logo-mini svg {
-  color: white;
-}
-
-.brand-text h1 {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: white;
-  margin: 0;
-  letter-spacing: 0.5px;
-}
-
-.brand-text p {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.6);
-  margin: 0;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-.sidebar-nav {
-  flex: 1;
-  padding: 1rem 0;
-  overflow-y: auto;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  background: transparent;
-  border: none;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  transition: all 0.3s;
-  font-size: 1rem;
-  width: 100%;
-  text-align: left;
-  position: relative;
-}
-
-.sidebar.collapsed .nav-item {
-  justify-content: center;
-  padding: 1rem;
-}
-
-.nav-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.nav-label {
-  flex: 1;
-  white-space: nowrap;
-}
-
-.nav-badge {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 0.25rem 0.5rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-}
-
-.nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.nav-item.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  font-weight: 600;
-}
-
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: white;
-  border-radius: 0 4px 4px 0;
-}
-
-.sidebar-footer {
-  padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.user-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.user-role {
-  font-size: 0.75rem;
-  opacity: 0.8;
-}
-
-.btn-logout {
-  width: 100%;
-  padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-size: 0.95rem;
-  transition: all 0.3s;
-}
-
-.btn-logout:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-}
-
-/* Main Content */
-.main-content {
-  margin-left: 280px;
-  flex: 1;
-  transition: margin-left 0.3s ease;
-  min-height: 100vh;
-}
-
-.sidebar.collapsed ~ .main-content {
-  margin-left: 80px;
-}
-
-.topbar {
-  background: white;
-  padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.topbar-left {
-  flex: 1;
-}
-
-.page-title {
-  font-size: 1.75rem;
-  color: #1f2937;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-.page-subtitle {
-  color: #6b7280;
-  font-size: 0.95rem;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s;
-  box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
-}
-
-.btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s;
-}
-
-.btn-secondary:hover {
-  background: #e5e7eb;
-}
-
-/* Dashboard Content */
-.dashboard-content {
-  padding: 2rem;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  display: flex;
-  gap: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s;
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #1e40af, #1e3a8a);
-}
-
-.stat-card.success::before {
-  background: linear-gradient(90deg, #10b981, #059669);
-}
-
-.stat-card.info::before {
-  background: linear-gradient(90deg, #3b82f6, #2563eb);
-}
-
-.stat-card.warning::before {
-  background: linear-gradient(90deg, #f59e0b, #d97706);
-}
-
-.stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.stat-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(30, 64, 175, 0.1), rgba(30, 64, 175, 0.05));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.stat-card.success .stat-icon-wrapper {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-}
-
-.stat-card.info .stat-icon-wrapper {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-}
-
-.stat-card.warning .stat-icon-wrapper {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
-}
-
-.stat-icon {
-  font-size: 2rem;
-}
-
-.stat-content {
-  flex: 1;
-}
-
-.stat-label {
-  color: #6b7280;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 0.5rem;
-}
-
-.stat-change {
-  font-size: 0.875rem;
-  color: #6b7280;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
-
-.stat-change.positive {
-  color: #10b981;
-}
-
-.stat-change.negative {
-  color: #ef4444;
-}
-
-/* Charts */
-.charts-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.chart-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.chart-header h3 {
-  font-size: 1.125rem;
-  color: #1f2937;
-  font-weight: 700;
-}
-
-.chart-select {
-  padding: 0.5rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.chart-container {
-  height: 300px;
-  position: relative;
-}
-
-.chart-large .chart-container {
-  height: 350px;
-}
-
-/* Table */
-.table-card {
-  background: white;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 2rem;
-}
-
-.table-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.table-header h3 {
-  font-size: 1.125rem;
-  color: #1f2937;
-  font-weight: 700;
-}
-
-.table-responsive {
-  overflow-x: auto;
-}
-
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.data-table thead {
-  background: #f9fafb;
-}
-
-.data-table th {
-  padding: 1rem;
-  text-align: left;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e5e7eb;
-}
-
-.data-table td {
-  padding: 1rem;
-  font-size: 0.875rem;
-  color: #6b7280;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.data-table tbody tr {
-  transition: background 0.2s;
-}
-
-.data-table tbody tr:hover {
-  background: #f9fafb;
-}
-
-.client-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.client-info strong {
-  color: #1f2937;
-  font-weight: 600;
-}
-
-.client-info small {
-  color: #9ca3af;
-  font-size: 0.75rem;
-}
-
-.price {
-  font-weight: 600;
-  color: #10b981;
-}
-
-.badge {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.badge-pagada {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.badge-pendiente {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.badge-cancelada {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.btn-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: none;
-  background: #f3f4f6;
-  color: #6b7280;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-}
-
-.btn-icon:hover {
-  background: #1e40af;
-  color: white;
-  transform: scale(1.1);
-}
-
-.btn-icon.btn-view:hover {
-  background: #3b82f6;
-}
-
-.btn-icon.btn-edit:hover {
-  background: #10b981;
-}
-
-.btn-icon.btn-delete:hover {
-  background: #ef4444;
-}
-
-/* Reservations View */
-.reservations-content {
-  padding: 2rem;
-}
-
-.filters-bar {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  margin-bottom: 1.5rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.search-input {
-  flex: 1;
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 0.95rem;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #1e40af;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
-}
-
-.filter-select {
-  padding: 0.75rem 1rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  min-width: 200px;
-  cursor: pointer;
-}
-
-/* Animaciones para notificaciones */
-@keyframes slideInRight {
-  from {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideOutRight {
-  from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(400px);
-    opacity: 0;
-  }
-}
-
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 80px;
-  }
-
-  .sidebar .nav-label,
-  .sidebar .nav-badge,
-  .sidebar .logo-container,
-  .sidebar-footer {
-    display: none;
-  }
-
-  .main-content {
-    margin-left: 80px;
-  }
-
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .topbar {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: flex-start;
-  }
-
-  .filters-bar {
-    flex-direction: column;
-  }
-}
+/* Todos los estilos están en booking-admin.css, booking-content.css y booking-modals.css */
 </style>

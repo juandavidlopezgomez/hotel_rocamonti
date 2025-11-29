@@ -122,6 +122,10 @@ Route::post('/reservas/{id}/cancelar', [ReservaController::class, 'cancelar']);
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HabitacionController as AdminHabitacionController;
 use App\Http\Controllers\Admin\ClienteController;
+use App\Http\Controllers\Admin\ReservaController as AdminReservaController;
+use App\Http\Controllers\Admin\ReporteController;
+use App\Http\Controllers\Admin\ConfiguracionController;
+use App\Http\Controllers\Admin\ActivityController;
 
 // Dashboard
 Route::get('/admin/stats', [DashboardController::class, 'stats']);
@@ -130,13 +134,76 @@ Route::get('/admin/ocupacion-semanal', [DashboardController::class, 'ocupacionSe
 Route::get('/admin/top-habitaciones', [DashboardController::class, 'topHabitaciones']);
 Route::post('/admin/generar-reporte', [DashboardController::class, 'generarReporte']);
 
-// Habitaciones Admin
-Route::get('/admin/habitaciones', [AdminHabitacionController::class, 'index']);
-Route::get('/admin/habitaciones/stats', [AdminHabitacionController::class, 'stats']);
-Route::put('/admin/habitaciones/{id}/estado', [AdminHabitacionController::class, 'cambiarEstado']);
+// Habitaciones Admin - CRUD completo
+Route::prefix('admin/habitaciones')->group(function () {
+    Route::get('/', [AdminHabitacionController::class, 'index']);
+    Route::post('/', [AdminHabitacionController::class, 'store']);
+    Route::put('/{id}', [AdminHabitacionController::class, 'update']);
+    Route::delete('/{id}', [AdminHabitacionController::class, 'destroy']);
+    Route::get('/stats', [AdminHabitacionController::class, 'stats']);
+    Route::put('/{id}/estado', [AdminHabitacionController::class, 'updateStatus']);
+    Route::get('/{id}/pricing', [AdminHabitacionController::class, 'getPricing']);
+    Route::get('/limpieza/cola', [AdminHabitacionController::class, 'getLimpiezaQueue']);
+    Route::post('/{id}/limpieza/completar', [AdminHabitacionController::class, 'markAsClean']);
+    Route::post('/{id}/bloquear', [AdminHabitacionController::class, 'block']);
+    Route::post('/{id}/desbloquear', [AdminHabitacionController::class, 'unblock']);
+    Route::get('/{id}/mantenimiento', [AdminHabitacionController::class, 'getMantenimiento']);
+});
 
-// Clientes Admin
-Route::get('/admin/clientes', [ClienteController::class, 'index']);
-Route::get('/admin/clientes/stats', [ClienteController::class, 'stats']);
-Route::get('/admin/clientes/{id}', [ClienteController::class, 'show']);
-Route::get('/admin/clientes/{id}/historial', [ClienteController::class, 'historial']);
+// Clientes Admin - CRUD completo
+Route::prefix('admin/clientes')->group(function () {
+    Route::get('/', [ClienteController::class, 'index']);
+    Route::get('/stats', [ClienteController::class, 'stats']);
+    Route::get('/{cedula}', [ClienteController::class, 'show']);
+    Route::put('/{cedula}', [ClienteController::class, 'update']);
+    Route::delete('/{cedula}', [ClienteController::class, 'destroy']);
+    Route::get('/{cedula}/vip-status', [ClienteController::class, 'getVipStatus']);
+    Route::get('/{cedula}/historial', [ClienteController::class, 'getHistorialReservas']);
+    Route::get('/{cedula}/comunicaciones', [ClienteController::class, 'getComunicaciones']);
+});
+
+// Reservas Admin - Gestión completa
+Route::prefix('admin/reservas')->group(function () {
+    Route::get('/', [AdminReservaController::class, 'index']);
+    Route::post('/', [AdminReservaController::class, 'store']);
+    Route::get('/{id}', [AdminReservaController::class, 'show']);
+    Route::put('/{id}', [AdminReservaController::class, 'update']);
+    Route::post('/{id}/cancelar', [AdminReservaController::class, 'cancelar']);
+    Route::post('/{id}/check-in', [AdminReservaController::class, 'checkIn']);
+    Route::post('/{id}/check-out', [AdminReservaController::class, 'checkOut']);
+    Route::post('/verificar-disponibilidad', [AdminReservaController::class, 'verificarDisponibilidad']);
+    Route::get('/buscar/disponibles', [AdminReservaController::class, 'buscarDisponibles']);
+    Route::get('/del-dia/lista', [AdminReservaController::class, 'reservasDelDia']);
+    Route::get('/estadisticas/general', [AdminReservaController::class, 'estadisticas']);
+});
+
+// Reportes Admin
+Route::prefix('admin/reportes')->group(function () {
+    Route::get('/reservas', [ReporteController::class, 'reporteReservas']);
+    Route::get('/ingresos', [ReporteController::class, 'reporteIngresos']);
+    Route::get('/ocupacion', [ReporteController::class, 'reporteOcupacion']);
+    Route::get('/clientes', [ReporteController::class, 'reporteClientes']);
+    Route::post('/exportar/pdf', [ReporteController::class, 'exportPDF']);
+    Route::post('/exportar/excel', [ReporteController::class, 'exportExcel']);
+});
+
+// Configuración Admin
+Route::prefix('admin/configuracion')->group(function () {
+    Route::get('/', [ConfiguracionController::class, 'getConfiguracion']);
+    Route::put('/', [ConfiguracionController::class, 'updateConfiguracion']);
+    Route::get('/politicas', [ConfiguracionController::class, 'getPoliticas']);
+    Route::put('/politicas', [ConfiguracionController::class, 'updatePoliticas']);
+    Route::get('/wompi/test', [ConfiguracionController::class, 'testWompi']);
+    Route::get('/backups', [ConfiguracionController::class, 'getBackups']);
+    Route::post('/backups/crear', [ConfiguracionController::class, 'createBackup']);
+    Route::post('/backups/restaurar', [ConfiguracionController::class, 'restoreBackup']);
+    Route::post('/cache/limpiar', [ConfiguracionController::class, 'clearCache']);
+    Route::get('/sistema/info', [ConfiguracionController::class, 'getSystemInfo']);
+});
+
+// Actividades (Auditoría) Admin
+Route::prefix('admin/activities')->group(function () {
+    Route::get('/', [ActivityController::class, 'index']);
+    Route::get('/stats', [ActivityController::class, 'stats']);
+    Route::get('/{id}', [ActivityController::class, 'show']);
+});

@@ -42,25 +42,45 @@ class DashboardController extends Controller
                              ->sum('precio_total');
 
         // Calcular habitaciones ocupadas y tasa de ocupación
-        $ocupadas = Reserva::where('estado', 'pagada')
+        $ocupadas = Reserva::where('estado', 'activa')
                           ->where('fecha_salida', '>=', now())
                           ->where('fecha_entrada', '<=', now())
-                          ->distinct('tipo_habitacion_id')
-                          ->count('tipo_habitacion_id');
+                          ->distinct('habitacion_id')
+                          ->count('habitacion_id');
 
-        $tasaOcupacion = $totalHabitaciones > 0 ? round(($ocupadas / $totalHabitaciones) * 100, 1) : 0;
+        $totalHabitacionesCount = Habitacion::count();
+        $tasaOcupacion = $totalHabitacionesCount > 0 ? round(($ocupadas / $totalHabitacionesCount) * 100, 1) : 0;
+
+        // Calcular ingresos del mes anterior para comparación
+        $ingresosMesAnterior = Reserva::where('estado', 'pagada')
+                             ->whereMonth('created_at', now()->subMonth()->month)
+                             ->whereYear('created_at', now()->subMonth()->year)
+                             ->sum('precio_total');
+
+        // Llegadas y salidas de hoy
+        $llegadasHoy = Reserva::whereDate('fecha_entrada', now())->count();
+        $salidasHoy = Reserva::whereDate('fecha_salida', now())->count();
+
+        // Reservas activas (confirmadas o en curso)
+        $reservasActivas = Reserva::whereIn('estado', ['confirmada', 'activa'])->count();
+        $reservasEstaSemana = Reserva::whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()])->count();
 
         return response()->json([
             'success' => true,
-            'stats' => [
-                'totalHabitaciones' => $totalHabitaciones,
-                'disponibles' => max(0, $totalHabitaciones - $ocupadas),
-                'ocupadas' => $ocupadas,
+            'data' => [
+                'totalHabitaciones' => $totalHabitacionesCount,
+                'disponibles' => max(0, $totalHabitacionesCount - $ocupadas),
+                'habitacionesOcupadas' => $ocupadas,
                 'totalReservas' => $totalReservas,
                 'reservasMes' => $reservasMes,
                 'ingresosTotales' => $ingresosTotales,
-                'ingresosMes' => $ingresosMes,
-                'tasaOcupacion' => $tasaOcupacion
+                'ingresosMes' => floatval($ingresosMes),
+                'ingresosMesAnterior' => floatval($ingresosMesAnterior > 0 ? $ingresosMesAnterior : 1),
+                'tasaOcupacion' => $tasaOcupacion,
+                'llegadasHoy' => $llegadasHoy,
+                'salidasHoy' => $salidasHoy,
+                'reservasActivas' => $reservasActivas,
+                'reservasEstaSemana' => $reservasEstaSemana
             ]
         ]);
     }
@@ -123,25 +143,35 @@ class DashboardController extends Controller
     {
         $limit = $request->input('limit', 5);
 
-        $tipos = TipoHabitacion::withCount(['reservas' => function($query) {
-                $query->whereIn('estado', ['pagada', 'pendiente']);
-            }])
-            ->orderBy('reservas_count', 'desc')
+        // Contar reservas por tipo de habitación usando subconsulta
+        $tipos = DB::table('tipo_habitacions as t')
+            ->select('t.id', 't.nombre')
+            ->selectRaw('COUNT(r.id) as total')
+            ->leftJoin('habitacions as h', 't.id', '=', 'h.tipo_habitacion_id')
+            ->leftJoin('reservas as r', function($join) {
+                $join->on('h.id', '=', 'r.habitacion_id')
+                     ->whereIn('r.estado', ['confirmada', 'activa', 'pagada']);
+            })
+            ->groupBy('t.id', 't.nombre')
+            ->orderBy('total', 'desc')
             ->limit($limit)
-            ->get()
-            ->map(function($tipo, $index) use ($limit) {
-                $maxReservas = TipoHabitacion::withCount('reservas')->max('reservas_count');
-                return [
-                    'id' => $tipo->id,
-                    'nombre' => $tipo->nombre,
-                    'total' => $tipo->reservas_count,
-                    'porcentaje' => $maxReservas > 0 ? round(($tipo->reservas_count / $maxReservas) * 100, 1) : 0
-                ];
-            });
+            ->get();
+
+        // Encontrar el máximo para calcular porcentajes
+        $maxReservas = $tipos->max('total');
+
+        $tiposFormateados = $tipos->map(function($tipo) use ($maxReservas) {
+            return [
+                'id' => $tipo->id,
+                'nombre' => $tipo->nombre,
+                'total' => $tipo->total,
+                'porcentaje' => $maxReservas > 0 ? round(($tipo->total / $maxReservas) * 100, 1) : 0
+            ];
+        });
 
         return response()->json([
             'success' => true,
-            'tipos' => $tipos
+            'tipos' => $tiposFormateados
         ]);
     }
 
