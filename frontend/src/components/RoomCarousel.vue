@@ -107,8 +107,8 @@ const goTo = (index) => {
 }
 
 const handleImageError = (event) => {
-  // Si la imagen no existe, usar placeholder
-  event.target.src = '/images/placeholder-room.jpg'
+  // Si la imagen no existe, usar placeholder SVG
+  event.target.src = '/images/placeholder-room.svg'
 }
 
 const startAutoplay = () => {

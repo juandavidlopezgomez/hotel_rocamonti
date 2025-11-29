@@ -133,7 +133,12 @@
           </div>
 
           <div class="card-footer">
-            <button @click="descargarConfirmacion" class="btn-secondary">
+            <button @click="descargarConfirmacion" class="btn-download">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
               Descargar Confirmación (PDF)
             </button>
             <button @click="router.push('/')" class="btn-primary">Volver al Inicio</button>
@@ -159,6 +164,7 @@ import { useBookingStore } from '../stores/bookingStore'
 import { formatCurrency } from '../utils/currency'
 import dayjs from 'dayjs'
 import api from '../services/api'
+import { generarPDFReserva } from '../utils/pdfGenerator'
 
 const route = useRoute()
 const router = useRouter()
@@ -190,23 +196,15 @@ async function descargarConfirmacion() {
       return
     }
 
+    // Obtener servicios adicionales si existen
+    const servicios = reserva.value.serviciosAdicionales || []
+
+    // Generar PDF con el nuevo generador profesional
+    const pdf = await generarPDFReserva(reserva.value, servicios)
+
+    // Descargar el PDF
     const reservaId = reserva.value.idReserva.toString().split('-')[0]
-
-    const response = await fetch(`http://localhost:8000/api/reservas/${reservaId}/comprobante`, {
-      method: 'GET'
-    })
-
-    if (!response.ok) throw new Error('Error al generar PDF')
-
-    const blob = await response.blob()
-    const url = window.URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `confirmacion-reserva-${reservaId}.pdf`
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(url)
-    document.body.removeChild(a)
+    pdf.save(`Confirmacion-Reserva-${reservaId}-HotelRocamonti.pdf`)
 
   } catch (error) {
     console.error('Error al descargar PDF:', error)
@@ -586,7 +584,8 @@ onMounted(async () => {
 }
 
 .btn-primary,
-.btn-secondary {
+.btn-secondary,
+.btn-download {
   padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 8px;
@@ -594,6 +593,9 @@ onMounted(async () => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-primary {
@@ -613,6 +615,30 @@ onMounted(async () => {
 
 .btn-secondary:hover {
   background: #d1d5db;
+}
+
+.btn-download {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.btn-download svg {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .info-message {

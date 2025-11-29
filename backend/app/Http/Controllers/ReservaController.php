@@ -140,14 +140,8 @@ class ReservaController extends Controller
                 $conflictos = Reserva::where('habitacion_id', $reserva->habitacion_id)
                     ->where('id', '!=', $reserva->id)
                     ->where('estado', '!=', 'cancelada')
-                    ->where(function($query) use ($fechaEntrada, $fechaSalida) {
-                        $query->whereBetween('fecha_entrada', [$fechaEntrada, $fechaSalida])
-                              ->orWhereBetween('fecha_salida', [$fechaEntrada, $fechaSalida])
-                              ->orWhere(function($q) use ($fechaEntrada, $fechaSalida) {
-                                  $q->where('fecha_entrada', '<=', $fechaEntrada)
-                                    ->where('fecha_salida', '>=', $fechaSalida);
-                              });
-                    })
+                    ->where('fecha_entrada', '<', $fechaSalida)
+                    ->where('fecha_salida', '>', $fechaEntrada)
                     ->count();
 
                 if ($conflictos > 0) {

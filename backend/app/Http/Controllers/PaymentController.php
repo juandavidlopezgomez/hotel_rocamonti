@@ -207,23 +207,42 @@ class PaymentController extends Controller
         DB::beginTransaction();
 
         try {
-            // Verificar el estado de la transacción en Wompi
-            $publicKey = env('WOMPI_PUBLIC_KEY');
-            $apiUrl = env('WOMPI_API_URL', 'https://sandbox.wompi.co/v1');
+            // MODO SIMULADO: Si el transaction_id empieza con "SIM-", es una transacción simulada
+            $isSimulated = strpos($validated['transaction_id'], 'SIM-') === 0;
 
-            $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $publicKey,
-            ])->get($apiUrl . '/transactions/' . $validated['transaction_id']);
+            if ($isSimulated) {
+                Log::info('💰 PAGO SIMULADO DETECTADO', [
+                    'transaction_id' => $validated['transaction_id']
+                ]);
+                // Saltar verificación de Wompi para pagos simulados
+                $transaction = [
+                    'data' => [
+                        'status' => 'APPROVED',
+                        'id' => $validated['transaction_id'],
+                        'reference' => $validated['transaction_id'],
+                        'amount_in_cents' => $validated['precio_total'] * 100,
+                        'currency' => 'COP'
+                    ]
+                ];
+            } else {
+                // MODO REAL: Verificar el estado de la transacción en Wompi
+                $publicKey = env('WOMPI_PUBLIC_KEY');
+                $apiUrl = env('WOMPI_API_URL', 'https://sandbox.wompi.co/v1');
 
-            if (!$response->successful()) {
-                throw new \Exception('No se pudo verificar el estado del pago');
-            }
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $publicKey,
+                ])->get($apiUrl . '/transactions/' . $validated['transaction_id']);
 
-            $transaction = $response->json();
-            $status = $transaction['data']['status'] ?? '';
+                if (!$response->successful()) {
+                    throw new \Exception('No se pudo verificar el estado del pago');
+                }
 
-            if ($status !== 'APPROVED') {
-                throw new \Exception('El pago no ha sido aprobado. Estado: ' . $status);
+                $transaction = $response->json();
+                $status = $transaction['data']['status'] ?? '';
+
+                if ($status !== 'APPROVED') {
+                    throw new \Exception('El pago no ha sido aprobado. Estado: ' . $status);
+                }
             }
 
             // Buscar una habitación disponible del tipo solicitado

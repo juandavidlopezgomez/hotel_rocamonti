@@ -265,13 +265,23 @@
                 🧪 <strong>Modo Prueba</strong> - Usa tarjeta: 4242 4242 4242 4242
               </div>
 
+              <button @click="pagoSimulado" class="btn-pagar-simulado" :disabled="cargandoPago">
+                <svg v-if="!cargandoPago" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <div v-if="cargandoPago" class="spinner-btn"></div>
+                {{ cargandoPago ? 'Procesando...' : '💰 Simular Pago Exitoso (Desarrollo)' }}
+              </button>
+
               <button @click="abrirPasarelaPago" class="btn-pagar" :disabled="cargandoPago">
                 <svg v-if="!cargandoPago" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                   <line x1="1" y1="10" x2="23" y2="10"></line>
                 </svg>
                 <div v-if="cargandoPago" class="spinner-btn"></div>
-                {{ cargandoPago ? 'Cargando...' : 'Confirmar y proceder al pago' }}
+                {{ cargandoPago ? 'Cargando...' : 'Pagar con Wompi (Requiere claves reales)' }}
               </button>
 
               <div v-if="errorPago" class="error-pago">
@@ -356,6 +366,65 @@ function calcularSubtotal() {
 
 function volver() {
   router.push('/reservar')
+}
+
+// Función de pago simulado para desarrollo
+async function pagoSimulado() {
+  try {
+    cargandoPago.value = true
+    errorPago.value = null
+
+    console.log('💰 INICIANDO PAGO SIMULADO...')
+
+    // Generar transaction_id simulado
+    const transactionId = 'SIM-' + Date.now()
+
+    // Calcular precio total
+    const precioStr = reserva.value.precioTotal.replace('COP', '').replace(/\./g, '').trim()
+    const precioTotal = parseInt(precioStr)
+
+    console.log('📦 Datos de la reserva:', {
+      transaction_id: transactionId,
+      tipo_habitacion_id: reserva.value.tipo.id,
+      precio_total: precioTotal
+    })
+
+    // Enviar reserva directamente al backend
+    const response = await api.post('/payments/confirmar', {
+      transaction_id: transactionId,
+      tipo_habitacion_id: reserva.value.tipo.id,
+      fecha_entrada: reserva.value.fechaEntrada,
+      fecha_salida: reserva.value.fechaSalida,
+      num_adultos: reserva.value.adultos,
+      num_ninos: reserva.value.ninos,
+      precio_total: precioTotal,
+      cliente: {
+        cedula: reserva.value.cliente.cedula,
+        nombre: reserva.value.cliente.nombre,
+        apellido: reserva.value.cliente.apellido,
+        email: reserva.value.cliente.email,
+        celular: reserva.value.cliente.telefono
+      }
+    })
+
+    console.log('✅ Respuesta del backend:', response.data)
+
+    if (response.data.success) {
+      console.log('🎉 PAGO SIMULADO EXITOSO')
+      // Redirigir a página de confirmación
+      router.push({
+        name: 'confirmacion',
+        params: { reservaId: response.data.data.reserva_id }
+      })
+    } else {
+      errorPago.value = response.data.message || 'Error al procesar el pago simulado'
+    }
+  } catch (error) {
+    console.error('❌ Error en pago simulado:', error)
+    errorPago.value = error.response?.data?.message || 'Error al procesar el pago simulado'
+  } finally {
+    cargandoPago.value = false
+  }
 }
 
 async function abrirPasarelaPago() {

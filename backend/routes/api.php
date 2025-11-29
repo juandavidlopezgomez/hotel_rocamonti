@@ -99,6 +99,7 @@ Route::get('/test-wompi', function () {
 
 // Rutas de habitaciones
 Route::get('/room-types', [RoomController::class, 'index']);
+Route::post('/rooms/available', [RoomController::class, 'getAvailableRooms']);
 Route::get('/rooms/{id}', [RoomController::class, 'show']);
 Route::get('/rooms/{id}/occupied-dates', [RoomController::class, 'getOccupiedDates']);
 

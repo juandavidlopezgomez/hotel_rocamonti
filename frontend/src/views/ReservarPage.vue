@@ -135,111 +135,82 @@
         <p>Buscando las mejores opciones para ti...</p>
       </div>
 
-      <!-- Lista de habitaciones con tarjetas modernas -->
+      <!-- Lista de habitaciones - DISEÑO EN CUADRITOS (GRID) -->
       <div v-else class="habitaciones-grid">
         <div v-for="tipo in tiposFiltrados" :key="tipo.id" class="habitacion-card">
-          <!-- Carrusel de imágenes profesional -->
-          <div class="card-image-carousel">
+          <!-- Imagen de la habitación -->
+          <div class="habitacion-imagen">
             <RoomCarousel :habitacion-id="tipo.id" />
-            <div class="tipo-badge-overlay">
-              <span class="tipo-badge">{{ tipo.es_apartamento ? 'Apartamento' : 'Habitación' }}</span>
+
+            <!-- Badge de disponibilidad -->
+            <div class="badge-disponibilidad" :class="esDisponible(tipo) ? 'disponible' : 'no-disponible'">
+              {{ esDisponible(tipo) ? 'Disponible' : 'No disponible' }}
             </div>
           </div>
 
-          <!-- Contenido de la tarjeta -->
-          <div class="card-body">
-            <h3 class="card-title">{{ tipo.nombre }}</h3>
+          <!-- Contenido -->
+          <div class="habitacion-contenido">
+            <h3 class="habitacion-nombre">{{ tipo.nombre }}</h3>
 
-            <div class="card-details">
-              <div class="detail-item">
+            <div class="habitacion-info">
+              <div class="info-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
                   <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                 </svg>
-                {{ tipo.descripcion_camas }}
+                <span>{{ tipo.descripcion_camas }}</span>
               </div>
-              <div class="detail-item">
+              <div class="info-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                   <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                 </svg>
-                {{ tipo.capacidad_adultos }} adulto{{ tipo.capacidad_adultos > 1 ? 's' : '' }}
-                <span v-if="tipo.capacidad_ninos > 0"> + {{ tipo.capacidad_ninos }} niño{{ tipo.capacidad_ninos > 1 ? 's' : '' }}</span>
+                <span>{{ tipo.capacidad_adultos }} adultos</span>
               </div>
-              <div class="detail-item">
+              <div class="info-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
-                {{ tipo.metros_cuadrados }} m²
+                <span>{{ tipo.metros_cuadrados }} m²</span>
               </div>
             </div>
 
-            <!-- Amenidades -->
-            <div class="amenidades-list">
-              <div v-for="(amenidad, index) in tipo.amenidades.slice(0, 4)" :key="index" class="amenidad-item">
-                ✓ {{ amenidad }}
-              </div>
+            <div class="habitacion-precio">
+              <span class="precio">{{ calcularPrecio(tipo) }}</span>
+              <span class="precio-texto">{{ mostrarPrecios ? `${noches} noche${noches > 1 ? 's' : ''}` : 'por noche' }}</span>
             </div>
 
-            <!-- Botón para ver disponibilidad -->
-            <button
-              class="btn-ver-disponibilidad"
-              @click.stop="toggleCalendario(tipo.id)"
-              type="button"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              {{ calendarioExpandido[tipo.id] ? 'Ocultar' : 'Ver' }} disponibilidad del calendario
-            </button>
+            <!-- Botones -->
+            <div class="habitacion-acciones">
+              <button
+                class="btn-secundario"
+                @click.stop="toggleCalendario(tipo.id)"
+                type="button"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Calendario
+              </button>
+              <button
+                class="btn-reservar"
+                @click="reservar(tipo)"
+                :disabled="!esDisponible(tipo)"
+              >
+                Reservar
+              </button>
+            </div>
 
             <!-- Calendario expandible -->
-            <div v-if="calendarioExpandido[tipo.id]" class="calendario-container">
+            <div v-if="calendarioExpandido[tipo.id]" class="calendario-expandido">
               <CalendarioReservas
                 v-model="filtros"
                 :tipo-habitacion-id="tipo.id"
                 @update:modelValue="actualizarFechasDesdeCalendario"
               />
-            </div>
-
-            <!-- Beneficios -->
-            <div class="beneficios">
-              <span class="beneficio-badge success">✓ Desayuno incluido</span>
-              <span class="beneficio-badge success">✓ Cancelación gratis</span>
-            </div>
-
-            <!-- Precio y selección -->
-            <div class="card-footer">
-              <div class="precio-section">
-                <div class="precio-calculado">
-                  <div class="precio-total">{{ calcularPrecio(tipo) }}</div>
-                  <div v-if="mostrarPrecios" class="precio-desglose">
-                    Para {{ noches }} noche{{ noches > 1 ? 's' : '' }}
-                    <br>
-                    <small>Incluye impuestos y cargos</small>
-                  </div>
-                  <div v-else class="precio-desglose">
-                    Precio por noche
-                  </div>
-                </div>
-              </div>
-
-              <button
-                class="btn-reservar"
-                @click="reservar(tipo)"
-              >
-                Reservar ahora
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
             </div>
           </div>
         </div>
@@ -545,8 +516,6 @@ function actualizarFechas(fechas) {
 
 async function cargarHabitaciones() {
   loading.value = true
-  console.log('🔄 INICIANDO CARGA DE HABITACIONES...')
-  console.log('URL Base:', 'http://localhost:8000/api')
 
   try {
     const params = {}
@@ -554,47 +523,21 @@ async function cargarHabitaciones() {
     if (filtros.value.fechaSalida) params.fecha_salida = filtros.value.fechaSalida
     if (filtros.value.adultos) params.num_adultos = filtros.value.adultos
 
-    console.log('📤 Parámetros:', params)
-    console.log('🌐 Haciendo petición a: /room-types')
-
     const response = await api.get('/room-types', { params })
-
-    console.log('✅ RESPUESTA RECIBIDA:', response)
-    console.log('📦 Data:', response.data)
-    console.log('📊 Headers:', response.headers)
 
     if (response.data.success) {
       tipos.value = response.data.tipos.map((t) => ({
         ...t,
         cantidad_seleccionada: 0
       }))
-      console.log('✅ HABITACIONES CARGADAS:', tipos.value.length)
-      alert('✅ ÉXITO: ' + tipos.value.length + ' habitaciones cargadas')
     } else {
-      console.error('⚠️ Response success = false')
-      alert('⚠️ El servidor respondió pero success=false')
+      console.error('Error: response success = false')
     }
   } catch (error) {
-    console.error('❌ ERROR COMPLETO:', error)
-    console.error('❌ Mensaje:', error.message)
-    console.error('❌ Response:', error.response)
-    console.error('❌ Request:', error.request)
-    console.error('❌ Config:', error.config)
-
-    let errorMsg = 'Error: ' + error.message
-    if (error.response) {
-      errorMsg += '\nStatus: ' + error.response.status
-      errorMsg += '\nData: ' + JSON.stringify(error.response.data)
-    } else if (error.request) {
-      errorMsg += '\nNo se recibió respuesta del servidor'
-      errorMsg += '\nVerifica que el servidor esté corriendo en puerto 8000'
-    }
-
-    alert('❌ ERROR AL CARGAR HABITACIONES:\n\n' + errorMsg)
+    console.error('Error al cargar habitaciones:', error)
     mostrarAlerta('Error al cargar habitaciones. Por favor, intenta nuevamente.', 'Error')
   } finally {
     loading.value = false
-    console.log('🏁 CARGA FINALIZADA')
   }
 }
 
@@ -606,6 +549,18 @@ function calcularPrecio(tipo) {
   if (!mostrarPrecios.value) return formatCurrency(tipo.precio_base)
   const total = tipo.precio_base * noches.value
   return formatCurrency(total)
+}
+
+// Determinar si una habitación está disponible
+function esDisponible(tipo) {
+  // Si NO hay filtro de fechas, siempre mostrar como disponible
+  // (el usuario puede ver el calendario para elegir fechas específicas)
+  if (!filtros.value.fechaEntrada || !filtros.value.fechaSalida) {
+    return true
+  }
+
+  // Si hay filtro de fechas, verificar disponibilidad para esas fechas específicas
+  return tipo.habitaciones_disponibles > 0
 }
 
 function mostrarAlerta(mensaje, titulo = 'Atención') {
@@ -1719,5 +1674,193 @@ onMounted(() => {
 
 .btn-alert-ok:active {
   transform: translateY(0);
+}
+
+/* ========================================== */
+/* DISEÑO EN GRID - CUADRITOS VERTICALES    */
+/* ========================================== */
+
+.habitaciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.habitacion-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+}
+
+.habitacion-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px);
+}
+
+.habitacion-imagen {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+}
+
+.badge-disponibilidad {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+.badge-disponibilidad.disponible {
+  background: rgba(16, 185, 129, 0.95);
+  color: white;
+}
+
+.badge-disponibilidad.no-disponible {
+  background: rgba(239, 68, 68, 0.95);
+  color: white;
+}
+
+.habitacion-contenido {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.habitacion-nombre {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.habitacion-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.info-item svg {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.habitacion-precio {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.habitacion-precio .precio {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0071c2;
+}
+
+.habitacion-precio .precio-texto {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.habitacion-acciones {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.btn-secundario {
+  flex: 1;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-secundario:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.btn-reservar {
+  flex: 1;
+  padding: 10px 20px;
+  background: #0071c2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reservar:hover:not(:disabled) {
+  background: #005999;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 113, 194, 0.3);
+}
+
+.btn-reservar:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.calendario-expandido {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .habitaciones-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .habitaciones-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .habitaciones-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 </style>

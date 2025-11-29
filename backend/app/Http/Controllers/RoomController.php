@@ -34,20 +34,20 @@ class RoomController extends Controller
                         // Obtener IDs de habitaciones de este tipo
                         $habitacionIds = $tipo->habitaciones->pluck('id');
 
-                        // Contar cuántas están ocupadas en esas fechas
-                        $habitacionesOcupadas = Reserva::whereIn('habitacion_id', $habitacionIds)
+                        // Obtener IDs ÚNICOS de habitaciones ocupadas en esas fechas
+                        // Una reserva solapa si:
+                        // fecha_entrada < fecha_salida_nueva AND fecha_salida > fecha_entrada_nueva
+                        $habitacionesOcupadasIds = Reserva::whereIn('habitacion_id', $habitacionIds)
                             ->where('estado', '!=', 'cancelada')
-                            ->where(function($query) use ($fechaEntrada, $fechaSalida) {
-                                $query->whereBetween('fecha_entrada', [$fechaEntrada, $fechaSalida])
-                                      ->orWhereBetween('fecha_salida', [$fechaEntrada, $fechaSalida])
-                                      ->orWhere(function($q) use ($fechaEntrada, $fechaSalida) {
-                                          $q->where('fecha_entrada', '<=', $fechaEntrada)
-                                            ->where('fecha_salida', '>=', $fechaSalida);
-                                      });
-                            })
-                            ->count();
+                            ->where('fecha_entrada', '<', $fechaSalida)
+                            ->where('fecha_salida', '>', $fechaEntrada)
+                            ->pluck('habitacion_id')
+                            ->unique();
 
-                        $habitacionesDisponibles = max(0, $habitacionesDisponibles - $habitacionesOcupadas);
+                        $numHabitacionesOcupadas = $habitacionesOcupadasIds->count();
+                        $habitacionesDisponibles = max(0, $habitacionesDisponibles - $numHabitacionesOcupadas);
+
+                        \Log::info("Tipo {$tipo->nombre}: Total={$tipo->habitaciones->count()}, Ocupadas={$numHabitacionesOcupadas}, Disponibles={$habitacionesDisponibles}");
                     } catch (\Exception $e) {
                         // Si hay error con fechas, usar disponibilidad base
                         \Log::error('Error al calcular disponibilidad: ' . $e->getMessage());
@@ -138,14 +138,8 @@ class RoomController extends Controller
 
             $habitacionesOcupadas = Reserva::whereIn('habitacion_id', $habitacionIds)
                 ->where('estado', '!=', 'cancelada')
-                ->where(function($query) use ($fechaEntrada, $fechaSalida) {
-                    $query->whereBetween('fecha_entrada', [$fechaEntrada, $fechaSalida])
-                          ->orWhereBetween('fecha_salida', [$fechaEntrada, $fechaSalida])
-                          ->orWhere(function($q) use ($fechaEntrada, $fechaSalida) {
-                              $q->where('fecha_entrada', '<=', $fechaEntrada)
-                                ->where('fecha_salida', '>=', $fechaSalida);
-                          });
-                })
+                ->where('fecha_entrada', '<', $fechaSalida)
+                ->where('fecha_salida', '>', $fechaEntrada)
                 ->count();
 
             $disponibles = $tipo->habitaciones->count() - $habitacionesOcupadas;
@@ -167,54 +161,71 @@ class RoomController extends Controller
     public function getAvailableRooms(Request $request)
     {
         $request->validate([
-            'fecha_entrada' => 'required|date',
-            'fecha_salida' => 'required|date|after:fecha_entrada'
+            'fecha_inicio' => 'required|date',
+            'fecha_fin' => 'required|date|after:fecha_inicio'
         ]);
 
         try {
-            $fechaEntrada = Carbon::parse($request->fecha_entrada);
-            $fechaSalida = Carbon::parse($request->fecha_salida);
+            $fechaEntrada = Carbon::parse($request->fecha_inicio);
+            $fechaSalida = Carbon::parse($request->fecha_fin);
 
             $tipos = TipoHabitacion::with('habitaciones')->get();
 
             $disponibles = $tipos->map(function($tipo) use ($fechaEntrada, $fechaSalida) {
                 $habitacionIds = $tipo->habitaciones->pluck('id');
 
-                $habitacionesOcupadas = Reserva::whereIn('habitacion_id', $habitacionIds)
+                // Obtener IDs de habitaciones ocupadas
+                $habitacionesOcupadasIds = Reserva::whereIn('habitacion_id', $habitacionIds)
                     ->where('estado', '!=', 'cancelada')
-                    ->where(function($query) use ($fechaEntrada, $fechaSalida) {
-                        $query->whereBetween('fecha_entrada', [$fechaEntrada, $fechaSalida])
-                              ->orWhereBetween('fecha_salida', [$fechaEntrada, $fechaSalida])
-                              ->orWhere(function($q) use ($fechaEntrada, $fechaSalida) {
-                                  $q->where('fecha_entrada', '<=', $fechaEntrada)
-                                    ->where('fecha_salida', '>=', $fechaSalida);
-                              });
-                    })
-                    ->count();
+                    ->where('fecha_entrada', '<', $fechaSalida)
+                    ->where('fecha_salida', '>', $fechaEntrada)
+                    ->pluck('habitacion_id')
+                    ->unique()
+                    ->values();
 
-                $disponibles = $tipo->habitaciones->count() - $habitacionesOcupadas;
+                // Habitaciones disponibles (no ocupadas)
+                $habitacionesDisponibles = $tipo->habitaciones->filter(function($hab) use ($habitacionesOcupadasIds) {
+                    return !$habitacionesOcupadasIds->contains($hab->id);
+                });
 
                 return [
-                    'id' => $tipo->id,
-                    'nombre' => $tipo->nombre,
-                    'precio_base' => $tipo->precio_base,
-                    'habitaciones_disponibles' => max(0, $disponibles)
+                    'tipo' => [
+                        'idTipoHabitacion' => $tipo->id,
+                        'Nombre' => $tipo->nombre,
+                        'Descripcion' => $tipo->descripcion_camas ?? 'Habitación confortable',
+                        'PrecioBase' => (float) $tipo->precio_base,
+                        'capacidad' => $tipo->capacidad_adultos + $tipo->capacidad_ninos,
+                        'capacidad_adultos' => $tipo->capacidad_adultos,
+                        'capacidad_ninos' => $tipo->capacidad_ninos,
+                    ],
+                    'cantidad_disponibles' => $habitacionesDisponibles->count(),
+                    'habitaciones_disponibles' => $habitacionesDisponibles->map(function($hab) {
+                        return [
+                            'idHabitacion' => $hab->id,
+                            'numeroHabitacion' => $hab->numero_habitacion,
+                            'Piso' => $hab->piso,
+                            'imagenes' => []  // Agregar imágenes si están disponibles
+                        ];
+                    })->values()
                 ];
             })->filter(function($tipo) {
-                return $tipo['habitaciones_disponibles'] > 0;
+                return $tipo['cantidad_disponibles'] > 0;
             });
 
             return response()->json([
                 'success' => true,
-                'tipos' => $disponibles->values()
-            ]);
+                'data' => $disponibles->values()
+            ])->header('Access-Control-Allow-Origin', '*');
 
         } catch (\Exception $e) {
+            \Log::error('Error en getAvailableRooms: ' . $e->getMessage());
+            \Log::error($e->getTraceAsString());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error al buscar habitaciones disponibles',
                 'error' => $e->getMessage()
-            ], 500);
+            ], 500)->header('Access-Control-Allow-Origin', '*');
         }
     }
 
@@ -234,7 +245,7 @@ class RoomController extends Controller
                 ->where('fecha_salida', '>=', now()->format('Y-m-d'))
                 ->get(['fecha_entrada', 'fecha_salida', 'habitacion_id']);
 
-            // Agrupar por habitación para saber cuántas habitaciones están ocupadas por fecha
+            // Agrupar por fecha y contar HABITACIONES ÚNICAS ocupadas (no reservas)
             $fechasOcupadas = [];
             $totalHabitaciones = $habitaciones->count();
 
@@ -246,17 +257,21 @@ class RoomController extends Controller
                     $fecha = $fechaActual->format('Y-m-d');
 
                     if (!isset($fechasOcupadas[$fecha])) {
-                        $fechasOcupadas[$fecha] = 0;
+                        $fechasOcupadas[$fecha] = [];
                     }
 
-                    $fechasOcupadas[$fecha]++;
+                    // Guardar el ID de la habitación (no incrementar contador)
+                    $fechasOcupadas[$fecha][] = $reserva->habitacion_id;
                     $fechaActual->modify('+1 day');
                 }
             }
 
             // Marcar fechas como completamente ocupadas o parcialmente ocupadas
             $resultado = [];
-            foreach ($fechasOcupadas as $fecha => $numOcupadas) {
+            foreach ($fechasOcupadas as $fecha => $habitacionesOcupadasIds) {
+                // Contar habitaciones ÚNICAS ocupadas (eliminar duplicados)
+                $numOcupadas = count(array_unique($habitacionesOcupadasIds));
+
                 $resultado[] = [
                     'fecha' => $fecha,
                     'ocupadas' => $numOcupadas,

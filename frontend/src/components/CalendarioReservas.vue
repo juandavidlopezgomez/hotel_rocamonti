@@ -35,23 +35,17 @@
         @click="seleccionarFecha(dia)"
       >
         <span v-if="dia.numero">{{ dia.numero }}</span>
-        <div v-if="dia.estaOcupado" class="estado-badge">
-          No disponible
-        </div>
-        <div v-else-if="dia.numero && !dia.esPasado" class="estado-badge disponible-badge">
-          Disponible
-        </div>
       </div>
     </div>
 
     <div class="calendario-leyenda">
       <div class="leyenda-item">
         <span class="color-box disponible"></span>
-        <span>Disponible - puedes reservar</span>
+        <span>Puedes reservar</span>
       </div>
       <div class="leyenda-item">
         <span class="color-box ocupado"></span>
-        <span>Ocupado - no disponible</span>
+        <span>Ocupado</span>
       </div>
     </div>
   </div>
@@ -201,12 +195,7 @@ async function cargarFechasOcupadas() {
   if (!props.tipoHabitacionId) return
 
   try {
-    const response = await api.get('/hotel-api-emergencia.php', {
-      params: {
-        action: 'occupied_dates',
-        tipo_id: props.tipoHabitacionId
-      }
-    })
+    const response = await api.get(`/rooms/${props.tipoHabitacionId}/occupied-dates`)
     if (response.data.success) {
       fechasOcupadas.value = response.data.fechas
       totalHabitaciones.value = response.data.total_habitaciones
@@ -348,22 +337,6 @@ onMounted(() => {
 .calendario-dia.en-rango {
   background: #bbdefb;
   color: #0066cc;
-}
-
-.estado-badge {
-  position: absolute;
-  bottom: 2px;
-  font-size: 8px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.estado-badge.disponible-badge {
-  background: rgba(5, 150, 105, 0.9);
 }
 
 .calendario-leyenda {

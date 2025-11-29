@@ -26,22 +26,6 @@
           Reservar
         </router-link>
 
-        <router-link to="/habitaciones" class="nav-link" exact-active-class="active">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 20h20"></path>
-            <path d="M7 15h10"></path>
-            <path d="M7 10h10"></path>
-            <path d="M7 5h10"></path>
-            <path d="M2 5h2"></path>
-            <path d="M2 10h2"></path>
-            <path d="M2 15h2"></path>
-            <path d="M20 5h2"></path>
-            <path d="M20 10h2"></path>
-            <path d="M20 15h2"></path>
-          </svg>
-          Habitaciones
-        </router-link>
-
         <router-link to="/contacto" class="nav-link" exact-active-class="active">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -93,13 +77,6 @@
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           </svg>
           Reservar
-        </router-link>
-
-        <router-link to="/habitaciones" class="mobile-nav-link" @click="closeMobileMenu">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M2 20h20"></path>
-          </svg>
-          Habitaciones
         </router-link>
 
         <router-link to="/contacto" class="mobile-nav-link" @click="closeMobileMenu">

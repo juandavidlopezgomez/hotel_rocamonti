@@ -43,15 +43,11 @@
       <div class="calendar-legend">
         <div class="legend-item">
           <span class="legend-dot disponible"></span>
-          <span>Disponible</span>
+          <span>Puedes reservar</span>
         </div>
         <div class="legend-item">
           <span class="legend-dot ocupado"></span>
           <span>Ocupado</span>
-        </div>
-        <div class="legend-item">
-          <span class="legend-dot seleccionado"></span>
-          <span>Seleccionado</span>
         </div>
       </div>
 
@@ -554,20 +550,23 @@ function formatearFechaISO(fecha) {
 }
 
 .calendar-day.disponible {
-  background: #d1fae5;
-  color: #065f46;
+  background: #10b981;
+  color: white;
+  font-weight: 600;
 }
 
 .calendar-day.disponible:hover {
-  background: #10b981;
+  background: #059669;
   color: white;
   transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
 }
 
 .calendar-day.ocupado {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #ef4444;
+  color: white;
   cursor: not-allowed;
+  font-weight: 600;
 }
 
 .calendar-day.seleccionado {
